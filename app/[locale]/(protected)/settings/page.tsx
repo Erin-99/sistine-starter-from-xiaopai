@@ -19,7 +19,6 @@ type UserProfile = {
   email: string;
   emailVerified: boolean;
   image?: string | null;
-  credits: number;
   createdAt: string;
   subscription?: {
     planKey: string;
@@ -276,14 +275,6 @@ export default function SettingsPage() {
                 </div>
                 <div className="rounded-2xl bg-muted/50 p-4">
                   <p className="text-sm text-muted-foreground">
-                    {t("sections.billing.creditsBalance")}
-                  </p>
-                  <p className="mt-1 text-lg font-semibold text-card-foreground">
-                    {userProfile?.credits ?? 0}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-muted/50 p-4">
-                  <p className="text-sm text-muted-foreground">
                     {t("sections.billing.renewal")}
                   </p>
                   <p className="mt-1 text-lg font-semibold text-card-foreground">
@@ -291,13 +282,6 @@ export default function SettingsPage() {
                   </p>
                 </div>
                 <div className="space-y-3">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => router.push(`/${locale}/credits`)}
-                  >
-                    {t("sections.billing.manageCredits")}
-                  </Button>
                   <Button
                     variant="outline"
                     className="w-full justify-start"

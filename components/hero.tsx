@@ -1,244 +1,509 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { Button } from "./button";
-import { HiArrowRight } from "react-icons/hi2";
-import { Badge } from "./badge";
-import { AnimatePresence, motion } from "framer-motion";
-
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { LocaleLink } from "@/components/locale-link";
-import { useTranslations, useLocale } from 'next-intl';
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Download,
+  ImagePlus,
+  LoaderCircle,
+  LockKeyhole,
+  Shirt,
+  Sparkles,
+  Upload,
+  UserRound,
+  X,
+} from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 
-const COURSE_COMMUNITY_URL = "https://scys.com/deepsea/2001/course";
+import { Button } from "@/components/button";
+import { useSession } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
-export const Hero = () => {
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+type TryOnStatus = {
+  dailyLimit: number;
+  maxGarments: number;
+  remaining: number;
+  tier: "free" | "paid";
+  used: number;
+  watermark: boolean;
+};
+
+const FREE_STATUS: TryOnStatus = {
+  dailyLimit: 3,
+  maxGarments: 1,
+  remaining: 3,
+  tier: "free",
+  used: 0,
+  watermark: true,
+};
+
+function readImageAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error(`Failed to read image ${file.name}`));
+    reader.readAsDataURL(file);
+  });
+}
+
+type UploadSurfaceProps = {
+  alt: string;
+  ariaLabel: string;
+  className?: string;
+  icon: React.ReactNode;
+  image: string | null;
+  onChoose: () => void;
+  onRemove?: () => void;
+  removeLabel: string;
+};
+
+function UploadSurface({
+  alt,
+  ariaLabel,
+  className,
+  icon,
+  image,
+  onChoose,
+  onRemove,
+  removeLabel,
+}: UploadSurfaceProps) {
+  return (
+    <div
+      className={cn(
+        "group relative isolate overflow-hidden rounded-md border border-dashed border-border bg-muted/40",
+        className
+      )}
+    >
+      {image ? (
+        <>
+          <Image
+            src={image}
+            alt={alt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 30vw"
+            unoptimized
+            className="object-contain"
+          />
+          <button
+            type="button"
+            aria-label={ariaLabel}
+            onClick={onChoose}
+            className="absolute inset-0 z-10 bg-black/0 transition-colors hover:bg-black/10"
+          />
+          {onRemove && (
+            <button
+              type="button"
+              aria-label={removeLabel}
+              onClick={onRemove}
+              className="absolute right-2 top-2 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/65 text-white transition hover:bg-black/80"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </>
+      ) : (
+        <button
+          type="button"
+          aria-label={ariaLabel}
+          onClick={onChoose}
+          className="flex h-full w-full flex-col items-center justify-center gap-3 px-4 text-center text-muted-foreground transition hover:bg-accent hover:text-foreground"
+        >
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-primary shadow-sm">
+            {icon}
+          </span>
+          <span className="text-sm font-semibold text-foreground">{ariaLabel}</span>
+          <span className="text-xs">PNG · JPEG · WebP</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function Hero() {
   const router = useRouter();
-  const t = useTranslations('hero');
   const locale = useLocale();
-  const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
+  const t = useTranslations("hero");
+  const session = useSession();
+  const modelInput = useRef<HTMLInputElement>(null);
+  const garmentInputs = useRef<Array<HTMLInputElement | null>>([]);
+  const [modelImage, setModelImage] = useState<string | null>(null);
+  const [garmentImages, setGarmentImages] = useState<Array<string | null>>([null]);
+  const [resultImage, setResultImage] = useState<string | null>(null);
+  const [status, setStatus] = useState<TryOnStatus>(FREE_STATUS);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const userId = session.data?.user?.id;
 
   useEffect(() => {
-    if (!isCodeModalOpen) {
+    if (!userId) {
+      setStatus(FREE_STATUS);
+      setGarmentImages([null]);
       return;
     }
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsCodeModalOpen(false);
-      }
-    };
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
+    let cancelled = false;
+    void fetch("/api/try-on", { cache: "no-store" })
+      .then(async response => {
+        if (!response.ok) {
+          throw new Error(`Try-on status request failed with ${response.status}`);
+        }
+        return (await response.json()) as TryOnStatus;
+      })
+      .then(nextStatus => {
+        if (cancelled) return;
+        setStatus(nextStatus);
+        setGarmentImages(current =>
+          Array.from(
+            { length: nextStatus.maxGarments },
+            (_, index) => current[index] ?? null
+          )
+        );
+      })
+      .catch(statusError => {
+        console.error("Failed to load try-on status:", statusError);
+      });
 
     return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
+      cancelled = true;
     };
-  }, [isCodeModalOpen]);
+  }, [userId]);
+
+  function requireLogin() {
+    if (userId) return true;
+    router.push(`/${locale}/login`);
+    return false;
+  }
+
+  async function readSelectedImage(file: File) {
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+      throw new Error(t("tryOn.errors.fileType"));
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      throw new Error(t("tryOn.errors.fileSize"));
+    }
+
+    return readImageAsDataUrl(file);
+  }
+
+  async function selectModelImage(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    try {
+      setError(null);
+      setModelImage(await readSelectedImage(file));
+      setResultImage(null);
+    } catch (selectionError) {
+      setError(selectionError instanceof Error ? selectionError.message : t("tryOn.errors.fileType"));
+    }
+  }
+
+  async function selectGarmentImage(
+    index: number,
+    event: ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    try {
+      setError(null);
+      const image = await readSelectedImage(file);
+      setGarmentImages(current =>
+        current.map((currentImage, currentIndex) =>
+          currentIndex === index ? image : currentImage
+        )
+      );
+      setResultImage(null);
+    } catch (selectionError) {
+      setError(selectionError instanceof Error ? selectionError.message : t("tryOn.errors.fileType"));
+    }
+  }
+
+  async function generateTryOn() {
+    if (!requireLogin()) return;
+
+    const selectedGarments = garmentImages.filter(
+      (image): image is string => Boolean(image)
+    );
+    if (!modelImage || selectedGarments.length === 0) {
+      setError(t("tryOn.errors.missingImages"));
+      return;
+    }
+
+    setError(null);
+    setIsGenerating(true);
+    try {
+      const response = await fetch("/api/try-on", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          modelImage,
+          garmentImages: selectedGarments,
+        }),
+      });
+      const payload = (await response.json()) as {
+        error?: string;
+        remaining?: number;
+        url?: string;
+      };
+
+      if (response.status === 401) {
+        router.push(`/${locale}/login`);
+        return;
+      }
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || t("tryOn.errors.generation"));
+      }
+
+      setResultImage(payload.url);
+      if (typeof payload.remaining === "number") {
+        setStatus(current => ({
+          ...current,
+          remaining: payload.remaining as number,
+          used: current.dailyLimit - (payload.remaining as number),
+        }));
+      }
+    } catch (generationError) {
+      setError(
+        generationError instanceof Error
+          ? generationError.message
+          : t("tryOn.errors.generation")
+      );
+    } finally {
+      setIsGenerating(false);
+    }
+  }
 
   return (
-    <div className="flex flex-col min-h-screen pt-20 md:pt-40 relative overflow-hidden">
-      <motion.div
-        initial={{
-          y: 40,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-        }}
-        className="flex justify-center"
-      >
-        <Badge onClick={() => router.push(`/${locale}/blog/top-5-llm-of-all-time`)}>
-          {t('badge')}
-        </Badge>
-      </motion.div>
-      <motion.h1
-        initial={{
-          y: 40,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-        }}
-        className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10"
-      >
-        {t('title')}
-      </motion.h1>
-      <motion.h2
-        initial={{
-          y: 40,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-          delay: 0.2,
-        }}
-        className="text-center mt-6 text-base md:text-xl text-muted-foreground max-w-3xl mx-auto relative z-10 font-normal"
-      >
-        {t('description')}
-      </motion.h2>
-      <motion.div
-        initial={{
-          y: 80,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-          delay: 0.4,
-        }}
-        className="flex items-center gap-4 justify-center mt-6 relative z-10"
-      >
-        <Button
-          as={LocaleLink}
-          href="/docs"
-          target="_blank"
-          rel="noopener noreferrer"
+    <section id="try-on" className="relative min-h-screen px-4 pb-16 pt-28 sm:px-6 lg:pt-32">
+      <div className="mx-auto max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center"
         >
-          {t('cta.primary')}
-        </Button>
-        <Button
-          variant="simple"
-          type="button"
-          onClick={() => setIsCodeModalOpen(true)}
-          className="flex space-x-2 items-center group"
+          <div className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+            <Sparkles className="h-4 w-4" />
+            <span>{t("badge")}</span>
+          </div>
+          <h1 className="text-balance text-4xl font-semibold text-foreground sm:text-5xl lg:text-6xl">
+            {t("title")}
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+            {t("description")}
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.12, ease: "easeOut" }}
+          className="mt-10 overflow-hidden rounded-lg border border-border bg-card shadow-2xl shadow-primary/10"
         >
-          <span>{t('cta.secondary')}</span>
-          <HiArrowRight className="text-muted-foreground group-hover:translate-x-1 stroke-[1px] h-3 w-3 transition-transform duration-200" />
-        </Button>
-      </motion.div>
-      <AnimatePresence>
-        {isCodeModalOpen && (
-          <motion.div
-            className="fixed inset-0 z-[80] flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsCodeModalOpen(false)}
-          >
-            <div className="absolute inset-0 bg-background/70 backdrop-blur-md" />
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="hero-code-modal-title"
-              aria-describedby="hero-code-modal-description"
-              className="relative w-full max-w-xl overflow-hidden rounded-[28px] border border-border bg-background shadow-2xl"
-              initial={{ y: 24, opacity: 0, scale: 0.97 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 20, opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent_55%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_55%)]" />
-              <div className="relative p-6 sm:p-8">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
-                    {t("modal.eyebrow")}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsCodeModalOpen(false)}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/80 text-lg text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-                    aria-label={t("modal.close")}
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-
-                <h3
-                  id="hero-code-modal-title"
-                  className="mt-6 max-w-lg text-2xl font-semibold text-foreground sm:text-3xl"
-                >
-                  {t("modal.title")}
-                </h3>
-                <p
-                  id="hero-code-modal-description"
-                  className="mt-4 text-sm leading-7 text-muted-foreground sm:text-base"
-                >
-                  {t("modal.description")}
+          <div className="flex flex-col gap-3 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                <Shirt className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  {status.tier === "paid" ? t("tryOn.paidNote") : t("tryOn.freeNote")}
                 </p>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                  {t("modal.instruction")}
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {userId
+                    ? t("tryOn.remaining", {
+                        remaining: status.remaining,
+                        limit: status.dailyLimit,
+                      })
+                    : t("tryOn.signIn")}
                 </p>
-
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Button
-                    as="a"
-                    href={COURSE_COMMUNITY_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group"
-                  >
-                    <span>{t("modal.linkLabel")}</span>
-                    <HiArrowRight className="ml-2 h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-                  </Button>
-                  <Button
-                    variant="simple"
-                    type="button"
-                    onClick={() => setIsCodeModalOpen(false)}
-                  >
-                    {t("modal.close")}
-                  </Button>
-                </div>
-
-                <a
-                  href={COURSE_COMMUNITY_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex break-all text-sm text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
-                >
-                  {t("modal.linkHint")}
-                </a>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div className="p-4 border border-border bg-secondary rounded-[32px] mt-20 relative overflow-hidden">
-        <div className="absolute inset-x-0 bottom-0 h-40 w-full bg-gradient-to-b from-transparent via-background to-background scale-[1.1] pointer-events-none" />
-        <div className="p-2 bg-background border border-border rounded-[24px]">
-          <Image
-            src="/starter/sample.png"
-            alt="Product interface preview"
-            width={1920}
-            height={1080}
-            className="rounded-[20px] dark:hidden"
-            priority
-          />
-          <Image
-            src="/starter/sampledark.png"
-            alt="Product interface preview in dark mode"
-            width={1920}
-            height={1080}
-            className="rounded-[20px] hidden dark:block"
-            priority
-          />
-        </div>
+            </div>
+            {!userId && (
+              <span className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <LockKeyhole className="h-4 w-4" />
+                {t("tryOn.signIn")}
+              </span>
+            )}
+          </div>
+
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr_1fr]">
+            <div className="border-b border-border p-4 sm:p-6 lg:border-b-0 lg:border-r">
+              <div className="mb-4">
+                <h2 className="text-base font-semibold text-foreground">
+                  {t("tryOn.model.title")}
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("tryOn.model.description")}
+                </p>
+              </div>
+              <input
+                ref={modelInput}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="hidden"
+                onChange={selectModelImage}
+              />
+              <UploadSurface
+                alt={t("tryOn.model.alt")}
+                ariaLabel={modelImage ? t("tryOn.model.replace") : t("tryOn.model.upload")}
+                icon={<UserRound className="h-5 w-5" />}
+                image={modelImage}
+                onChoose={() => {
+                  if (requireLogin()) modelInput.current?.click();
+                }}
+                onRemove={modelImage ? () => setModelImage(null) : undefined}
+                removeLabel={t("tryOn.remove")}
+                className="aspect-[3/4] w-full lg:aspect-auto lg:h-[400px]"
+              />
+            </div>
+
+            <div className="border-b border-border p-4 sm:p-6 lg:border-b-0 lg:border-r">
+              <div className="mb-4">
+                <h2 className="text-base font-semibold text-foreground">
+                  {t("tryOn.garments.title")}
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("tryOn.garments.description")}
+                </p>
+              </div>
+              <div
+                className={cn(
+                  "grid gap-3",
+                  status.maxGarments === 1 ? "grid-cols-1" : "grid-cols-3"
+                )}
+              >
+                {garmentImages.map((image, index) => (
+                  <div key={index}>
+                    <input
+                      ref={element => {
+                        garmentInputs.current[index] = element;
+                      }}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      className="hidden"
+                      onChange={event => selectGarmentImage(index, event)}
+                    />
+                    <UploadSurface
+                      alt={`${t("tryOn.garments.alt")} ${index + 1}`}
+                      ariaLabel={image ? t("tryOn.garments.replace") : t("tryOn.garments.upload")}
+                      icon={
+                        image ? (
+                          <Upload className="h-5 w-5" />
+                        ) : (
+                          <ImagePlus className="h-5 w-5" />
+                        )
+                      }
+                      image={image}
+                      onChoose={() => {
+                        if (requireLogin()) garmentInputs.current[index]?.click();
+                      }}
+                      onRemove={
+                        image
+                          ? () =>
+                              setGarmentImages(current =>
+                                current.map((item, itemIndex) =>
+                                  itemIndex === index ? null : item
+                                )
+                              )
+                          : undefined
+                      }
+                      removeLabel={t("tryOn.remove")}
+                      className={cn(
+                        "aspect-[3/4] w-full",
+                        status.maxGarments === 1 && "max-w-sm lg:h-[400px] lg:max-w-none lg:aspect-auto"
+                      )}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5">
+                <Button
+                  type="button"
+                  onClick={generateTryOn}
+                  disabled={isGenerating || (Boolean(userId) && status.remaining === 0)}
+                  className="w-full justify-center rounded-md py-3"
+                >
+                  {isGenerating ? (
+                    <>
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                      {t("tryOn.generating")}
+                    </>
+                  ) : userId ? (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      {t("tryOn.generate")}
+                    </>
+                  ) : (
+                    <>
+                      <LockKeyhole className="mr-2 h-4 w-4" />
+                      {t("tryOn.signIn")}
+                    </>
+                  )}
+                </Button>
+                {error && (
+                  <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
+                    {error}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-6">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="text-base font-semibold text-foreground">
+                  {t("tryOn.result.title")}
+                </h2>
+                {resultImage && (
+                  <a
+                    href={resultImage}
+                    download="clothcraft-try-on.png"
+                    aria-label={t("tryOn.result.download")}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-accent hover:text-foreground"
+                  >
+                    <Download className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md border border-border bg-muted/40 lg:h-[400px] lg:aspect-auto">
+                {resultImage ? (
+                  <Image
+                    src={resultImage}
+                    alt={t("tryOn.result.alt")}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 32vw"
+                    unoptimized
+                    className="object-contain"
+                  />
+                ) : (
+                  <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center text-muted-foreground">
+                    <span className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-border bg-background">
+                      {isGenerating ? (
+                        <LoaderCircle className="h-6 w-6 animate-spin text-primary" />
+                      ) : (
+                        <Shirt className="h-6 w-6 text-primary" />
+                      )}
+                    </span>
+                    <p className="max-w-52 text-sm leading-6">
+                      {isGenerating ? t("tryOn.generating") : t("tryOn.result.empty")}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
-};
+}

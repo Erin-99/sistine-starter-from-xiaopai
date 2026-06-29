@@ -1,22 +1,15 @@
 {
-  "name": "sistine-starter-vibe-to-production",
+  "name": "clothcraft",
   "version": "0.1.0",
-  "description": "The first AI SaaS starter built for vibe coding. Ship production-ready AI SaaS using Cursor, Claude Code, or Windsurf.",
+  "description": "AI virtual try-on with Seedream 5.0 Lite.",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Idea-To-Business/sistine-starter-vibe-to-production.git"
-  },
   "keywords": [
-    "vibe-coding",
-    "ai-saas",
+    "virtual-try-on",
+    "fashion-ai",
     "nextjs",
     "starter",
-    "cursor",
-    "claude-code",
-    "windsurf"
+    "seedream"
   ],
-  "author": "Sistine AI & Sistine Labs",
   "license": "MIT",
   "scripts": {
     "predev": "pnpm run sync:fumadocs-style",
@@ -83,6 +76,7 @@
     "rehype-highlight": "^7.0.2",
     "remark-gfm": "^4.0.0",
     "resend": "^6.1.0",
+    "sharp": "0.34.5",
     "shiki": "^4.0.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.3.0",

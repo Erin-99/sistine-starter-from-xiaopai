@@ -22,7 +22,6 @@ function getEnv(name: string) {
 }
 
 export async function createCheckoutSession(params: CreateCheckoutParams): Promise<CreateCheckoutResult> {
-  const apiKey = getEnv("CREEM_API_KEY");
   const simulate = process.env.CREEM_SIMULATE === "true";
 
   if (simulate) {
@@ -30,9 +29,15 @@ export async function createCheckoutSession(params: CreateCheckoutParams): Promi
     return { url: "/api/payments/creem/redirect-placeholder?success=1" };
   }
 
+  const apiKey = getEnv("CREEM_API_KEY");
+  const creemPriceId = params.creemPriceId?.trim();
+  if (!creemPriceId) {
+    throw new Error(`Creem product ID is not configured for ${params.key}`);
+  }
+
   // Create payload according to Creem API documentation
   const payload: Record<string, unknown> = {
-    product_id: params.creemPriceId, // Creem expects product_id
+    product_id: creemPriceId, // Creem expects product_id
     success_url: params.successUrl,
     metadata: {
       userId: params.userId,

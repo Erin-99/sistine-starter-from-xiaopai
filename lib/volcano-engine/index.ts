@@ -5,7 +5,7 @@ export * from './image';
 export * from './video';
 
 import { createChatCompletion, createChatStream } from './chat';
-import { generateImage, generateImageFromText } from './image';
+import { generateImage, generateImageFromText, generateTryOnImage } from './image';
 import { 
   generateVideo, 
   getVideoStatus, 
@@ -21,6 +21,7 @@ export const volcanoEngine = {
   // Image functions
   generateImage,
   generateImageFromText,
+  generateTryOnImage,
   
   // Video functions
   generateVideo,

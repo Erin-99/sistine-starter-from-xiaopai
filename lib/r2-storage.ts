@@ -115,6 +115,28 @@ export async function uploadImageFromUrl(
   }
 }
 
+export async function uploadImageBuffer(
+  image: Buffer,
+  userId: string,
+  contentType: 'image/png' | 'image/jpeg' = 'image/png'
+): Promise<string> {
+  if (!isR2Configured()) {
+    return `data:${contentType};base64,${image.toString('base64')}`;
+  }
+
+  try {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    const extension = getExtensionFromContentType(contentType);
+    const key = `images/${userId}/${timestamp}_${random}.${extension}`;
+
+    return await uploadToR2(key, image, contentType);
+  } catch (error) {
+    console.error('Error uploading image buffer to R2, using a data URL:', error);
+    return `data:${contentType};base64,${image.toString('base64')}`;
+  }
+}
+
 /**
  * Get file extension from content type
  */

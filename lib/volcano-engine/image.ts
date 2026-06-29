@@ -4,6 +4,7 @@ import {
   ImageGenerationResponse,
   VolcanoEngineError 
 } from './types';
+import { createSeedreamTryOnRequest } from '@/lib/image-generation';
 
 type ImageGenerationOptions = {
   size?: 'adaptive' | '1K' | '2K' | '4K';
@@ -61,4 +62,29 @@ export async function generateImageFromText(
     url: response.data[0].url,
     revisedPrompt: response.data[0].revised_prompt,
   };
+}
+
+export async function generateTryOnImage(
+  inputImages: string[]
+): Promise<ImageGenerationResponse> {
+  validateConfig();
+
+  const request = createSeedreamTryOnRequest(
+    inputImages,
+    inputImages.length - 1
+  );
+  const response = await fetch(`${volcanoEngineConfig.apiUrl}/images/generations`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => null)) as VolcanoEngineError | null;
+    throw new Error(
+      `Volcano Engine API error (${response.status}): ${error?.error?.message || response.statusText || 'Unknown error'}`
+    );
+  }
+
+  return response.json();
 }

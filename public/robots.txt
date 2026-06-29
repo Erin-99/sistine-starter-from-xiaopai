@@ -1,4 +1,4 @@
-# robots.txt for SISTINE AI
+# robots.txt for ClothCraft
 # TODO: Replace 'your-domain.com' with your actual domain before deploying
 
 User-agent: *

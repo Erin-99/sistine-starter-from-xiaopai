@@ -145,9 +145,9 @@ describe("SettingsPage", () => {
     expect(screen.getByRole("heading", { name: "Settings" })).toBeInTheDocument();
     expect(await screen.findByDisplayValue("Sistine Builder")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Sistine Builder")).toBeInTheDocument();
-    expect(screen.getByText("420")).toBeInTheDocument();
+    expect(screen.queryByText("420")).not.toBeInTheDocument();
     expect(screen.getByText("Starter Monthly")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Manage credits" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Manage credits" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "View pricing" })).toBeInTheDocument();
   });
 

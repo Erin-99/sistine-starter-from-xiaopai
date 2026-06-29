@@ -14,7 +14,7 @@ describe("run-dev utils", () => {
       NODE_TLS_REJECT_UNAUTHORIZED: "0",
       DYLD_INSERT_LIBRARIES: "/tmp/libMallocDebug.dylib",
       CUSTOM_VALUE: "keep-me",
-    });
+    } as unknown as NodeJS.ProcessEnv);
 
     expect(cleanEnv).toEqual({
       PATH: "/usr/bin",
@@ -23,14 +23,14 @@ describe("run-dev utils", () => {
   });
 
   it("supports switching dev bundlers without duplicating flags", () => {
-    expect(resolveNextDevArgs(["--webpack", "-p", "3001"], {})).toEqual([
+    expect(resolveNextDevArgs(["--webpack", "-p", "3001"], {} as NodeJS.ProcessEnv)).toEqual([
       "dev",
       "--webpack",
       "-p",
       "3001",
     ]);
-    expect(resolveNextDevArgs(["--turbo"], {})).toEqual(["dev", "--turbopack"]);
-    expect(resolveNextDevArgs([], { NEXT_DEV_BUNDLER: "webpack" })).toEqual([
+    expect(resolveNextDevArgs(["--turbo"], {} as NodeJS.ProcessEnv)).toEqual(["dev", "--turbopack"]);
+    expect(resolveNextDevArgs([], { NEXT_DEV_BUNDLER: "webpack" } as unknown as NodeJS.ProcessEnv)).toEqual([
       "dev",
       "--webpack",
     ]);

@@ -1,237 +1,156 @@
 "use client";
 
-import { IconCircleCheckFilled } from "@tabler/icons-react";
-import { motion } from "framer-motion";
+import { Check, Sparkles } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { Button } from "./button";
-import { cn } from "@/lib/utils";
+
+import { Button } from "@/components/button";
 import { useSession } from "@/lib/auth-client";
-import {
-  getDefaultOneTimePack,
-  getSubscriptionPlanDisplays,
-} from "@/lib/billing-display";
+import { getSubscriptionPlanDisplays } from "@/lib/billing-display";
+import { cn } from "@/lib/utils";
 
 type BillingTab = "monthly" | "yearly";
 
+function FeatureList({ features }: { features: string[] }) {
+  return (
+    <ul role="list" className="mt-7 space-y-3 text-sm leading-6">
+      {features.map(feature => (
+        <li key={feature} className="flex gap-3">
+          <Check className="mt-0.5 h-4 w-4 flex-none text-primary" aria-hidden="true" />
+          <span>{feature}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function Pricing() {
   const [active, setActive] = useState<BillingTab>("monthly");
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const session = useSession();
   const router = useRouter();
   const t = useTranslations("pricing");
   const locale = useLocale();
   const userId = session.data?.user?.id;
+  const plan = getSubscriptionPlanDisplays()[0];
 
-  const subscriptionPlans = getSubscriptionPlanDisplays();
-  const defaultPack = getDefaultOneTimePack();
+  const startCheckout = useCallback(async () => {
+    if (!plan) {
+      setCheckoutError(t("errors.unavailable"));
+      return;
+    }
+    if (!userId) {
+      router.push(`/${locale}/signup`);
+      return;
+    }
 
-  const tabs = [
-    { name: t("billing.monthly"), value: "monthly" },
-    { name: t("billing.yearly"), value: "yearly" },
-  ] satisfies Array<{ name: string; value: BillingTab }>;
-
-  const startCheckout = useCallback(
-    async (key: string, kind: "subscription" | "one_time") => {
-      if (!userId) {
-        router.push(`/${locale}/signup`);
-        return;
-      }
-
-      const res = await fetch("/api/payments/creem/checkout", {
+    const selectedPlan = active === "monthly" ? plan.monthlyPlan : plan.yearlyPlan;
+    setCheckoutError(null);
+    try {
+      const response = await fetch("/api/payments/creem/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, kind }),
+        body: JSON.stringify({ key: selectedPlan.key, kind: "subscription" }),
       });
+      const payload = (await response.json()) as { error?: string; url?: string };
 
-      if (!res.ok) {
-        return;
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || t("errors.checkout"));
       }
+      window.location.href = payload.url;
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : t("errors.checkout"));
+    }
+  }, [active, locale, plan, router, t, userId]);
 
-      const { url } = (await res.json()) as { url: string };
-      window.location.href = url;
-    },
-    [locale, router, userId]
-  );
+  if (!plan) {
+    return null;
+  }
+
+  const paidPrice = active === "monthly" ? plan.displayMonthlyPrice : plan.displayYearlyPrice;
+  const paidPeriod = active === "monthly" ? t("period.month") : t("period.year");
 
   return (
-    <div className="relative">
-      <div className="mx-auto mb-12 flex w-fit items-center justify-center overflow-hidden rounded-md bg-muted">
-        {tabs.map((tab) => (
+    <div className="relative mx-auto w-full max-w-5xl">
+      <div className="mx-auto mb-10 grid w-fit grid-cols-2 rounded-md border border-border bg-muted p-1">
+        {(["monthly", "yearly"] as const).map(tab => (
           <button
-            key={tab.value}
+            key={tab}
+            type="button"
+            onClick={() => setActive(tab)}
             className={cn(
-              "relative rounded-md p-4 text-sm font-medium text-muted-foreground",
-              active === tab.value ? "text-primary-foreground" : ""
+              "min-w-28 rounded px-4 py-2 text-sm font-medium transition",
+              active === tab
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
             )}
-            onClick={() => setActive(tab.value)}
           >
-            {active === tab.value && (
-              <motion.span
-                layoutId="pricing-billing-tab"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                className="absolute inset-0 bg-primary"
-              />
-            )}
-            <span className="relative z-10">{tab.name}</span>
+            {t(`billing.${tab}`)}
           </button>
         ))}
       </div>
 
-      <div className="relative z-20 mx-auto mt-4 grid grid-cols-1 items-stretch gap-4 md:mt-20 md:grid-cols-2 xl:grid-cols-3">
-        {subscriptionPlans.map((plan) => {
-          const currentPlan = active === "monthly" ? plan.monthlyPlan : plan.yearlyPlan;
-          const currentPrice =
-            active === "monthly" ? plan.displayMonthlyPrice : plan.displayYearlyPrice;
-          const currentCredits =
-            active === "monthly" ? plan.displayMonthlyCredits : plan.displayYearlyCredits;
-          const creditSummary =
-            active === "monthly"
-              ? t("details.monthlyCredits", { credits: currentCredits })
-              : t("details.yearlyCredits", { credits: currentCredits });
-          const deliverySummary =
-            active === "monthly"
-              ? t("details.subscriptionDelivery")
-              : t("details.yearlyInstallments", {
-                  credits: plan.displayYearlyCreditsPerGrant,
-                });
-
-          return (
-            <div
-              key={plan.id}
-              className={cn(
-                plan.featured ? "relative bg-primary shadow-2xl" : "bg-card",
-                "flex h-full flex-col justify-between rounded-lg px-6 py-8 sm:mx-8 lg:mx-0"
-              )}
-            >
-              <div>
-                <h3
-                  className={cn(
-                    plan.featured ? "text-primary-foreground" : "text-muted-foreground",
-                    "text-base font-semibold leading-7"
-                  )}
-                >
-                  {t(`tiers.${plan.id}.name`)}
-                </h3>
-                <p className="mt-4">
-                  <motion.span
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    key={`${plan.id}-${active}`}
-                    className={cn(
-                      "inline-block text-4xl font-bold tracking-tight",
-                      plan.featured ? "text-primary-foreground" : "text-foreground"
-                    )}
-                  >
-                    {currentPrice}
-                  </motion.span>
-                </p>
-                <p
-                  className={cn(
-                    plan.featured ? "text-primary-foreground/80" : "text-muted-foreground",
-                    "mt-3 text-sm font-medium"
-                  )}
-                >
-                  {creditSummary}
-                </p>
-                <p
-                  className={cn(
-                    plan.featured ? "text-primary-foreground/80" : "text-muted-foreground",
-                    "mt-2 text-sm"
-                  )}
-                >
-                  {deliverySummary}
-                </p>
-                <p
-                  className={cn(
-                    plan.featured ? "text-primary-foreground/80" : "text-muted-foreground",
-                    "mt-6 min-h-12 text-sm leading-7"
-                  )}
-                >
-                  {t(`tiers.${plan.id}.description`)}
-                </p>
-                <ul
-                  role="list"
-                  className={cn(
-                    plan.featured ? "text-primary-foreground/80" : "text-muted-foreground",
-                    "mt-8 space-y-3 text-sm leading-6 sm:mt-10"
-                  )}
-                >
-                  {(t.raw(`tiers.${plan.id}.features`) as string[]).map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
-                      <IconCircleCheckFilled
-                        className={cn(
-                          plan.featured ? "text-primary-foreground" : "text-muted-foreground",
-                          "h-6 w-5 flex-none"
-                        )}
-                        aria-hidden="true"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <Button
-                onClick={() => startCheckout(currentPlan.key, "subscription")}
-                className={cn(
-                  plan.featured
-                    ? "bg-background text-foreground shadow-sm hover:bg-background/90 focus-visible:outline-background"
-                    : "",
-                  "mt-8 block w-full rounded-full px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10"
-                )}
-              >
-                {t(`tiers.${plan.id}.cta`)}
-              </Button>
-            </div>
-          );
-        })}
-
-        <div className="flex h-full flex-col justify-between rounded-lg bg-card px-6 py-8 sm:mx-8 lg:mx-0">
-          <div>
-            <h3 className="text-base font-semibold leading-7 text-muted-foreground">
-              {t("tiers.credits.name")}
-            </h3>
-            <p className="mt-4">
-              <motion.span
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                key={`credits-pack-${defaultPack.key}`}
-                className="inline-block text-4xl font-bold tracking-tight text-foreground"
-              >
-                {defaultPack.displayPrice}
-              </motion.span>
-            </p>
-            <p className="mt-3 text-sm font-medium text-muted-foreground">
-              {t("details.oneTimeCredits", { credits: defaultPack.displayCredits })}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t("details.oneTimeDelivery")}
-            </p>
-            <p className="mt-6 min-h-12 text-sm leading-7 text-muted-foreground">
-              {t("tiers.credits.description")}
-            </p>
-            <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-muted-foreground sm:mt-10">
-              {(t.raw("tiers.credits.features") as string[]).map((feature) => (
-                <li key={feature} className="flex gap-x-3">
-                  <IconCircleCheckFilled
-                    className="h-6 w-5 flex-none text-muted-foreground"
-                    aria-hidden="true"
-                  />
-                  {feature}
-                </li>
-              ))}
-            </ul>
+      <div className="grid gap-5 md:grid-cols-2">
+        <article className="flex min-h-[430px] flex-col rounded-lg border border-border bg-card p-7 sm:p-9">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-xl font-semibold text-foreground">{t("tiers.free.name")}</h3>
+            <span className="text-xs font-medium text-muted-foreground">
+              {t("tiers.free.badge")}
+            </span>
+          </div>
+          <p className="mt-5 text-4xl font-semibold text-foreground">$0</p>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+            {t("tiers.free.description")}
+          </p>
+          <div className="text-muted-foreground">
+            <FeatureList features={t.raw("tiers.free.features") as string[]} />
           </div>
           <Button
-            onClick={() => startCheckout(defaultPack.key, "one_time")}
-            className="mt-8 block w-full rounded-full px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10"
+            type="button"
+            variant="simple"
+            onClick={() => router.push(userId ? `/${locale}/#try-on` : `/${locale}/signup`)}
+            className="mt-auto w-full justify-center rounded-md border border-border py-3"
           >
-            {t("tiers.credits.cta", { credits: defaultPack.displayCredits })}
+            {t("tiers.free.cta")}
           </Button>
-        </div>
+        </article>
+
+        <article className="relative flex min-h-[430px] flex-col overflow-hidden rounded-lg border border-primary bg-card p-7 shadow-2xl shadow-primary/10 sm:p-9">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-xl font-semibold text-foreground">
+              {t("tiers.clothcraft.name")}
+            </h3>
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              {t("tiers.clothcraft.badge")}
+            </span>
+          </div>
+          <p className="mt-5 text-4xl font-semibold text-foreground">
+            {paidPrice}
+            <span className="ml-2 text-sm font-normal text-muted-foreground">/{paidPeriod}</span>
+          </p>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+            {t("tiers.clothcraft.description")}
+          </p>
+          <div className="text-muted-foreground">
+            <FeatureList features={t.raw("tiers.clothcraft.features") as string[]} />
+          </div>
+          <Button
+            type="button"
+            onClick={startCheckout}
+            className="mt-auto w-full justify-center rounded-md py-3"
+          >
+            {t("tiers.clothcraft.cta")}
+          </Button>
+        </article>
       </div>
+
+      {checkoutError && (
+        <p role="alert" className="mt-4 text-center text-sm text-red-600 dark:text-red-400">
+          {checkoutError}
+        </p>
+      )}
     </div>
   );
 }

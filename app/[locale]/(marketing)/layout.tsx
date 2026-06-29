@@ -13,6 +13,7 @@ export async function generateMetadata(
   const t = await getTranslations({ locale: params.locale, namespace: 'seo' });
 
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
     title: t('home.title'),
     description: t('home.description'),
     openGraph: {

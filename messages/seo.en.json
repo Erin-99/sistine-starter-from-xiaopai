@@ -1,52 +1,52 @@
 {
   "home": {
-    "title": "Sistine AI - Vibe Code Your AI SaaS to Production",
-    "description": "Sistine AI is a platform that provides a wide range of AI tools and services to help you stay on top of your business. Generate images, text and everything else that you need to get your business off the ground.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "ClothCraft - AI Virtual Try-On",
+    "description": "Try clothes on any model photo with realistic AI. Combine up to three garments and create a polished 2K look in seconds.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "pricing": {
-    "title": "Pricing - Sistine AI SaaS Starter",
-    "description": "Choose the perfect plan for your AI SaaS. This pricing section is built with Sistine Starter - fully integrated with Creem for recurring payments.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Pricing - ClothCraft",
+    "description": "Compare ClothCraft Free and Pro plans for daily virtual try-ons, multi-garment styling, and watermark-free results.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "blog": {
-    "title": "Blog - Sistine AI",
-    "description": "Latest insights and updates from our team. Learn about AI SaaS development, vibe coding, and best practices for building production-ready applications.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Blog - ClothCraft",
+    "description": "Practical ideas for AI virtual try-on, digital styling, and better fashion content.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "contact": {
-    "title": "Contact Us - Sistine AI",
-    "description": "Get in touch with the Sistine AI team. We'd love to hear from you and respond as quickly as possible.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Contact - ClothCraft",
+    "description": "Contact the ClothCraft team with product questions and feedback.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "login": {
-    "title": "Login - Sistine AI",
-    "description": "Sign in to your Sistine AI account to access powerful AI tools and services for your business.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Sign In - ClothCraft",
+    "description": "Sign in to create your next AI virtual try-on.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "signup": {
-    "title": "Sign Up - Sistine AI",
-    "description": "Create your Sistine AI account and start building your AI SaaS product today with our powerful tools.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Create Account - ClothCraft",
+    "description": "Create a ClothCraft account and start with three free virtual try-ons each day.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "terms": {
-    "title": "Terms of Service - Sistine AI",
-    "description": "Read our terms of service to understand the rules and guidelines for using Sistine AI platform.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Terms of Service - ClothCraft",
+    "description": "Read the terms for using ClothCraft.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "privacy": {
-    "title": "Privacy Policy - Sistine AI",
-    "description": "Learn how Sistine AI collects, uses, and protects your personal information and data.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Privacy Policy - ClothCraft",
+    "description": "Learn how ClothCraft handles and protects your information.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "cookies": {
-    "title": "Cookie Policy - Sistine AI",
-    "description": "Understand how Sistine AI uses cookies and similar tracking technologies on our platform.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Cookie Policy - ClothCraft",
+    "description": "Learn how ClothCraft uses cookies and similar technologies.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "refund": {
-    "title": "Refund Policy - Sistine AI",
-    "description": "Review our refund policy to understand the conditions and process for requesting refunds.",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Refund Policy - ClothCraft",
+    "description": "Review the conditions and process for ClothCraft refund requests.",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   }
 }

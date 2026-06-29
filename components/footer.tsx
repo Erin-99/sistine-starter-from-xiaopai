@@ -1,117 +1,58 @@
 "use client";
-import React from "react";
-import { Logo } from "./Logo";
-import { useTranslations } from 'next-intl';
-import { LocaleLink } from './locale-link';
-import { NewsletterInline } from './newsletter-inline';
 
-export const Footer = () => {
+import { useTranslations } from "next-intl";
+
+import { Logo } from "@/components/Logo";
+import { LocaleLink } from "@/components/locale-link";
+import { NewsletterInline } from "@/components/newsletter-inline";
+
+export function Footer() {
   const t = useTranslations();
-  
-  const links = [
-    {
-      name: t('navigation.main.pricing'),
-      href: "/pricing",
-    },
-    {
-      name: t('navigation.main.blog'),
-      href: "/blog",
-    },
-    {
-      name: t('navigation.main.contact'),
-      href: "/contact",
-    },
+  const productLinks = [
+    { name: t("navigation.main.tryOn"), href: "/#try-on" },
+    { name: t("navigation.main.pricing"), href: "/pricing" },
+    { name: t("navigation.main.contact"), href: "/contact" },
   ];
-  const legal = [
-    {
-      name: t('navigation.footer.legal.terms'),
-      href: "/terms",
-    },
-    {
-      name: t('navigation.footer.legal.privacy'),
-      href: "/privacy",
-    },
-    {
-      name: t('navigation.footer.legal.cookies'),
-      href: "/cookies",
-    },
-    {
-      name: t('navigation.footer.legal.refund'),
-      href: "/refund",
-    },
+  const legalLinks = [
+    { name: t("navigation.footer.legal.terms"), href: "/terms" },
+    { name: t("navigation.footer.legal.privacy"), href: "/privacy" },
+    { name: t("navigation.footer.legal.cookies"), href: "/cookies" },
+    { name: t("navigation.footer.legal.refund"), href: "/refund" },
   ];
-  const socials = [
-    {
-      name: t('footer.social.twitter'),
-      href: "https://x.com/bourneliu66",
-      external: true,
-    },
-    {
-      name: t('footer.social.github'),
-      href: "https://github.com/Idea-To-Business/sistine-starter-vibe-to-production",
-      external: true,
-    },
-  ];
+
   return (
-    <div className="relative">
-      <div className="border-t border-border px-8 pt-20 pb-32 relative bg-background">
-        <div className="max-w-7xl mx-auto">
-          {/* Footer Links Section */}
-          <div className="text-sm text-muted-foreground flex sm:flex-row flex-col justify-between items-start">
-            <div>
-              <div className="mr-4 md:flex mb-4">
-                <Logo />
-              </div>
-              <div>{t('common.brand.copyright')}</div>
-              <div className="mt-2">{t('common.brand.allRightsReserved')}</div>
-              {/* Newsletter Inline */}
-              <div className="mt-6">
-                <NewsletterInline />
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-10 items-start mt-10 md:mt-0">
-              <div className="flex justify-center space-y-4 flex-col mt-4">
-                {links.map((link) => (
-                  <LocaleLink
-                    key={link.name}
-                    className="transition-colors hover:text-foreground text-muted-foreground text-xs sm:text-sm"
-                    href={link.href}
-                  >
-                    {link.name}
-                  </LocaleLink>
-                ))}
-              </div>
-              <div className="flex justify-center space-y-4 flex-col mt-4">
-                {legal.map((link) => (
-                  <LocaleLink
-                    key={link.name}
-                    className="transition-colors hover:text-foreground text-muted-foreground text-xs sm:text-sm"
-                    href={link.href}
-                  >
-                    {link.name}
-                  </LocaleLink>
-                ))}
-              </div>
-              <div className="flex justify-center space-y-4 flex-col mt-4">
-                {socials.map((link) => (
-                  <a
-                    key={link.name}
-                    className="transition-colors hover:text-foreground text-muted-foreground text-xs sm:text-sm"
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {link.name}
-                  </a>
-                ))}
-              </div>
-            </div>
+    <footer className="border-t border-border bg-background px-6 py-14 sm:px-8">
+      <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-[1fr_auto_auto]">
+        <div>
+          <Logo />
+          <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">
+            {t("footer.tagline")}
+          </p>
+          <div className="mt-6 max-w-sm">
+            <NewsletterInline />
           </div>
         </div>
+        <nav className="grid content-start gap-3 text-sm" aria-label={t("footer.product.title")}>
+          <p className="mb-1 font-semibold text-foreground">{t("footer.product.title")}</p>
+          {productLinks.map(link => (
+            <LocaleLink key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground">
+              {link.name}
+            </LocaleLink>
+          ))}
+        </nav>
+        <nav className="grid content-start gap-3 text-sm" aria-label={t("footer.legal.title")}>
+          <p className="mb-1 font-semibold text-foreground">{t("footer.legal.title")}</p>
+          {legalLinks.map(link => (
+            <LocaleLink key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground">
+              {link.name}
+            </LocaleLink>
+          ))}
+        </nav>
       </div>
-      <p className="text-center text-5xl md:text-9xl lg:text-[18rem] font-bold bg-clip-text text-transparent bg-gradient-to-b from-muted to-border inset-x-0">
-        SISTINE
-      </p>
-    </div>
+      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <span>{t("common.brand.copyright")}</span>
+        <span>{t("common.brand.allRightsReserved")}</span>
+      </div>
+    </footer>
   );
-};
+}

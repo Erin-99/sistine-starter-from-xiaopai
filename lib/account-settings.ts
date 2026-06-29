@@ -14,6 +14,10 @@ export function normalizeProfileName(name: string) {
 
 export function getSubscriptionPlanTranslationKey(planKey?: string | null) {
   switch (planKey) {
+    case "clothcraft_monthly":
+      return "clothcraftMonthly";
+    case "clothcraft_yearly":
+      return "clothcraftYearly";
     case "starter_monthly":
       return "starterMonthly";
     case "starter_yearly":

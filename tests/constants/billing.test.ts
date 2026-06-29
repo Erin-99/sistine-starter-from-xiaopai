@@ -7,9 +7,16 @@ import {
 
 describe("billing config", () => {
   it("exposes supported subscription keys", () => {
+    expect(isSubscriptionKey("clothcraft_monthly")).toBe(true);
+    expect(isSubscriptionKey("clothcraft_yearly")).toBe(true);
     expect(isSubscriptionKey("starter_monthly")).toBe(true);
     expect(isSubscriptionKey("starter_yearly")).toBe(true);
     expect(isSubscriptionKey("pack_200")).toBe(false);
+  });
+
+  it("keeps the ClothCraft list prices aligned with the product", () => {
+    expect(subscriptionPlans.clothcraft_monthly.priceCents).toBe(1990);
+    expect(subscriptionPlans.clothcraft_yearly.priceCents).toBe(19900);
   });
 
   it("exposes supported one-time pack keys", () => {

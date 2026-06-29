@@ -1,9 +1,9 @@
 {
   "common": {
     "brand": {
-      "name": "SISTINE",
-      "tagline": "Sistine AI & Sistine Labs",
-      "copyright": "Copyright © 2025 Sistine AI & Sistine Labs",
+      "name": "ClothCraft",
+      "tagline": "AI virtual try-on",
+      "copyright": "Copyright © 2026 ClothCraft",
       "allRightsReserved": "All rights reserved"
     },
     "actions": {
@@ -36,6 +36,7 @@
   },
   "navigation": {
     "main": {
+      "tryOn": "Try on",
       "pricing": "Pricing",
       "blog": "Blog",
       "contact": "Contact",
@@ -64,26 +65,48 @@
     }
   },
   "hero": {
-    "badge": "⚡ The First Starter Built for Vibe Coding",
-    "title": "Vibe Code Your AI SaaS to Production",
-    "description": "No coding skills? Perfect. Sistine + AI coding assistants = Your SaaS idea live in hours. Just describe what you want. Ship what users love.",
-    "cta": {
-      "primary": "View Docs",
-      "secondary": "Get Code"
-    },
-    "modal": {
-      "eyebrow": "Code Access",
-      "title": "Get the source code from our course community",
-      "description": "The full Sistine Starter codebase, update notes, and companion materials are distributed inside our course community.",
-      "instruction": "If you're enrolled, open the course page below in a new tab to access the code, updates, and course resources.",
-      "linkLabel": "Open the course community",
-      "linkHint": "Course community: https://scys.com/deepsea/2001/course",
-      "close": "Close"
+    "badge": "AI virtual try-on",
+    "title": "ClothCraft virtual try-on",
+    "description": "Upload a model photo and the clothes you love. ClothCraft creates a realistic styled look while preserving the person, pose, and scene.",
+    "tryOn": {
+      "model": {
+        "title": "Model photo",
+        "description": "Start with one clear portrait or full-body image",
+        "upload": "Upload model photo",
+        "replace": "Replace model photo",
+        "alt": "Model preview"
+      },
+      "garments": {
+        "title": "Garments",
+        "description": "Choose the clothing pieces for this look",
+        "upload": "Upload garment",
+        "replace": "Replace garment",
+        "alt": "Garment preview"
+      },
+      "result": {
+        "title": "Your result",
+        "empty": "Your styled look will appear here",
+        "alt": "Virtual try-on result",
+        "download": "Download result"
+      },
+      "generate": "Generate try-on",
+      "generating": "Styling your look...",
+      "signIn": "Sign in to try on",
+      "remaining": "{remaining} of {limit} try-ons left today",
+      "freeNote": "Free · 1 garment · ClothCraft watermark",
+      "paidNote": "Paid · Up to 3 garments · No watermark",
+      "remove": "Remove image",
+      "errors": {
+        "fileType": "Use a PNG, JPEG, or WebP image.",
+        "fileSize": "Each image must be 10MB or smaller.",
+        "missingImages": "Upload a model photo and at least one garment.",
+        "generation": "Could not generate the try-on. Please try again."
+      }
     }
   },
   "features": {
     "title": "Everything You Need for Vibe Coding Success",
-    "subtitle": "Stop wasting time on boilerplate. Focus on describing your unique features while Sistine handles the foundation. Ship faster with AI.",
+    "subtitle": "Create realistic outfit previews from a model photo and the garments you want to combine.",
     "items": {
       "aiOptimized": {
         "title": "Built for AI-Assisted Development",
@@ -104,88 +127,78 @@
     }
   },
   "pricing": {
-    "title": "Pricing Plans",
-    "subtitle": "Simple, transparent pricing that scales with your business",
-    "description": "Choose between live recurring subscriptions and a one-time credit top-up. Every price on this page is driven directly from the billing config used at checkout.",
+    "title": "Simple pricing for every look",
+    "subtitle": "Start free and upgrade when you need more outfits",
+    "description": "Create three virtual try-ons a day for free, or unlock higher daily limits, multi-garment styling, and watermark-free results.",
     "billing": {
       "monthly": "Monthly",
       "yearly": "Yearly"
     },
+    "period": {
+      "month": "month",
+      "year": "year"
+    },
+    "tiers": {
+      "free": {
+        "name": "Free",
+        "badge": "No card required",
+        "description": "For trying a few looks and getting a feel for ClothCraft.",
+        "cta": "Start free",
+        "features": [
+          "3 virtual try-ons per day",
+          "1 garment per result",
+          "2K PNG output",
+          "ClothCraft watermark"
+        ]
+      },
+      "clothcraft": {
+        "name": "ClothCraft Pro",
+        "badge": "Most flexible",
+        "description": "For creators, shoppers, and sellers who style outfits every day.",
+        "cta": "Upgrade to Pro",
+        "features": [
+          "20 virtual try-ons per day",
+          "Combine up to 3 garments",
+          "2K PNG output",
+          "No watermark"
+        ]
+      }
+    },
+    "errors": {
+      "unavailable": "This plan is currently unavailable.",
+      "checkout": "Checkout could not be started. Please try again."
+    },
     "comparison": {
       "title": "Plan Comparison",
       "rows": {
-        "purchaseType": "Purchase type",
-        "monthlyPrice": "Monthly price",
-        "yearlyPrice": "Yearly price",
-        "monthlyCredits": "Credits on monthly billing",
-        "yearlyCredits": "Credits on yearly billing",
-        "delivery": "Credit delivery",
-        "bestFor": "Best for"
+        "dailyTryOns": "Daily try-ons",
+        "garments": "Garments per result",
+        "watermark": "Watermark",
+        "resolution": "Output"
       },
       "values": {
-        "subscription": "Subscription",
-        "oneTime": "One-time pack",
-        "notApplicable": "N/A",
-        "creditsPerMonth": "{credits} / month",
-        "creditsPerYear": "{credits} / year",
-        "oneTimeCredits": "{credits} once",
-        "yearlyInstallments": "{credits} released each month on annual billing",
-        "instantAfterPayment": "Added instantly after payment",
-        "bestForStarter": "Shipping an MVP with recurring usage",
-        "bestForPro": "Heavier production workloads and frequent generation",
-        "bestForCredits": "Top-ups without changing your subscription"
-      }
-    },
-    "details": {
-      "monthlyCredits": "{credits} credits each month",
-      "yearlyCredits": "{credits} credits per year",
-      "subscriptionDelivery": "Recurring subscription billed through Creem",
-      "yearlyInstallments": "Annual billing releases {credits} credits each month",
-      "oneTimeCredits": "{credits} credits in one payment",
-      "oneTimeDelivery": "One-time checkout, credits added instantly"
-    },
-    "tiers": {
-      "starter": {
-        "name": "Starter",
-        "description": "For validating an AI product before you need high volume.",
-        "cta": "Choose Starter",
-        "features": [
-          "Access chat, image, and video generation",
-          "1,000 credits on monthly billing",
-          "Annual plan releases 1,000 credits each month",
-          "Buy extra credit packs whenever you need a top-up"
-        ]
-      },
-      "pro": {
-        "name": "Pro",
-        "description": "For teams and products that need more generation capacity.",
-        "cta": "Choose Pro",
-        "features": [
-          "Access chat, image, and video generation",
-          "10,000 credits on monthly billing",
-          "Annual plan releases 10,000 credits each month",
-          "Better fit for heavier production usage"
-        ]
-      },
-      "credits": {
-        "name": "Credits Pack",
-        "description": "One-time credits you can stack on top of any plan.",
-        "cta": "Buy {credits} Credits",
-        "features": [
-          "Credits are added immediately after payment",
-          "Keeps your current subscription unchanged",
-          "Useful for launches, spikes, and one-off bursts"
-        ]
+        "free": {
+          "dailyTryOns": "3 / day",
+          "garments": "1 garment",
+          "watermark": "ClothCraft",
+          "resolution": "2K PNG"
+        },
+        "paid": {
+          "dailyTryOns": "20 / day",
+          "garments": "Up to 3",
+          "watermark": "None",
+          "resolution": "2K PNG"
+        }
       }
     }
   },
   "testimonials": {
     "title": "Success Stories from Vibe Coders",
-    "subtitle": "Real developers and non-technical founders sharing their experience building AI SaaS products with Sistine and Vibe Coding.",
+    "subtitle": "People using ClothCraft to explore outfits, create fashion content, and present products.",
     "items": [
       {
         "name": "Alex Chen",
-        "quote": "I'm not a developer. I'm a marketer. But I shipped my AI SaaS in 3 days using Sistine + Cursor. Now making $5K MRR.",
+        "quote": "ClothCraft helps me turn product photos into outfit ideas before a campaign goes live.",
         "designation": "Marketing Manager turned Founder"
       },
       {
@@ -195,17 +208,17 @@
       },
       {
         "name": "Alice Johnson",
-        "quote": "From idea to $10K MRR in 2 months. All vibes, no code. Sistine made it possible to compete with funded startups.",
+        "quote": "I can compare different looks without arranging another photo shoot.",
         "designation": "Serial Entrepreneur"
       },
       {
         "name": "Bob Smith",
-        "quote": "Built and launched 3 different AI SaaS products this quarter alone. Vibe Coding with Sistine is my secret weapon.",
+        "quote": "Combining several garments in one result makes daily styling much faster.",
         "designation": "Indie Hacker"
       },
       {
         "name": "Cathy Lee",
-        "quote": "I describe features in plain English to Claude Code. Sistine handles the rest. Shipping has never been this fast.",
+        "quote": "The generated outfits keep the model recognizable and the clothing details clear.",
         "designation": "Product Manager"
       },
       {
@@ -300,7 +313,7 @@
   },
   "cta": {
     "title": "Ready to Ship Your AI SaaS?",
-    "description": "Join hundreds of developers who launched their SaaS products with Sistine and Vibe Coding.",
+    "description": "Create your next virtual outfit with ClothCraft.",
     "button": "Get Code"
   },
   "auth": {
@@ -386,7 +399,7 @@
   },
   "demo": {
     "badge": "Try Before You Buy",
-    "title": "Experience Sistine AI",
+    "title": "Experience ClothCraft",
     "description": "Test our powerful AI features without signing up. Get 3 free trials to explore what we can do.",
     "limitReached": "You've reached the demo limit. Sign up to continue using our AI tools with full features!",
     "signUpNow": "Sign Up Now",
@@ -709,10 +722,10 @@
     "title": "Dashboard",
     "welcome": "Welcome back",
     "welcomeBonus": {
-      "title": "🎉 Welcome to Sistine!",
-      "message": "Congratulations on your successful registration! We've added 300 credits welcome bonus to your account.",
-      "description": "Use these credits to try our AI chat, image generation, video generation, and more features.",
-      "ctaButton": "Try Now",
+      "title": "Welcome to ClothCraft",
+      "message": "Your account is ready with 3 free virtual try-ons each day.",
+      "description": "Upload a model photo and one garment to create your first look.",
+      "ctaButton": "Create a look",
       "dismissButton": "Got it"
     },
     "cards": {
@@ -743,6 +756,8 @@
         },
         "plans": {
           "free": "Free",
+          "clothcraftMonthly": "ClothCraft Pro Monthly",
+          "clothcraftYearly": "ClothCraft Pro Yearly",
           "starterMonthly": "Starter Monthly",
           "starterYearly": "Starter Yearly",
           "proMonthly": "Pro Monthly",
@@ -879,13 +894,12 @@
         "validation": "Name must be at least 2 characters."
       },
       "billing": {
-        "title": "Billing & Credits",
-        "description": "See your current plan and jump into credits or pricing.",
+        "title": "Billing",
+        "description": "Review your current subscription and renewal date.",
         "currentPlan": "Current plan",
         "creditsBalance": "Credits balance",
         "renewal": "Next renewal",
         "noRenewal": "No active subscription",
-        "manageCredits": "Manage credits",
         "viewPricing": "View pricing"
       },
       "security": {
@@ -904,8 +918,8 @@
     "subtitle": "We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
     "description": "Please reach out to us and we will get back to you at the speed of light.",
     "testimonial": {
-      "title": "Sistine AI is used by thousands of users",
-      "description": "With lots of AI applications around, Sistine AI stands out with its state of the art AI capabilities."
+      "title": "Create realistic looks with ClothCraft",
+      "description": "Combine model and garment photos into polished virtual try-on results."
     },
     "form": {
       "nameLabel": "Full Name",
@@ -974,10 +988,10 @@
     ]
   },
   "footer": {
-    "tagline": "Transform your SaaS ideas into reality with the power of AI.",
+    "tagline": "See the outfit before you wear it, powered by realistic AI virtual try-on.",
     "product": {
       "title": "Product",
-      "features": "Features",
+      "features": "Virtual try-on",
       "pricing": "Pricing",
       "documentation": "Documentation"
     },

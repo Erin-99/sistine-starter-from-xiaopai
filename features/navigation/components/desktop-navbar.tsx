@@ -35,7 +35,7 @@ export const DesktopNavbar = () => {
       className={cn(
         "w-full flex relative justify-between px-4 py-2 rounded-full bg-transparent transition duration-200",
         showBackground &&
-          "bg-secondary shadow-[0px_-2px_0px_0px_hsl(var(--muted)),0px_2px_0px_0px_hsl(var(--muted))]"
+          "bg-secondary shadow-navbar"
       )}
     >
       <AnimatePresence>

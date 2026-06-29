@@ -8,21 +8,16 @@ import {
 export const DEFAULT_ONE_TIME_PACK_KEY: PackKey = "pack_200";
 export const MARKETING_SUBSCRIPTION_PLAN_FAMILIES = [
   {
-    id: "starter",
-    monthlyKey: "starter_monthly",
-    yearlyKey: "starter_yearly",
-    featured: false,
-  },
-  {
-    id: "pro",
-    monthlyKey: "pro_monthly",
-    yearlyKey: "pro_yearly",
+    id: "clothcraft",
+    monthlyKey: "clothcraft_monthly",
+    yearlyKey: "clothcraft_yearly",
     featured: true,
   },
 ] as const;
 
 function formatUsdPrice(priceCents: number) {
-  return `$${(priceCents / 100).toFixed(0)}`;
+  const fractionDigits = priceCents % 100 === 0 ? 0 : 2;
+  return `$${(priceCents / 100).toFixed(fractionDigits)}`;
 }
 
 function formatCredits(credits: number) {

@@ -78,27 +78,20 @@ describe("marketing pricing", () => {
   it("renders only the configured plans on the pricing cards", () => {
     render(<Pricing />);
 
-    expect(screen.getByRole("heading", { name: "Starter" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Pro" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Credits Pack" })).toBeInTheDocument();
-    expect(screen.getByText("$29")).toBeInTheDocument();
-    expect(screen.getByText("$99")).toBeInTheDocument();
-    expect(screen.getByText("$5")).toBeInTheDocument();
-    expect(screen.queryByText("Free")).not.toBeInTheDocument();
-    expect(screen.queryByText("Enterprise")).not.toBeInTheDocument();
-    expect(screen.queryByText("Professional")).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Free" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "ClothCraft Pro" })).toBeInTheDocument();
+    expect(screen.getByText("$19.90")).toBeInTheDocument();
+    expect(screen.queryByText("Starter")).not.toBeInTheDocument();
+    expect(screen.queryByText("Credits Pack")).not.toBeInTheDocument();
   });
 
   it("keeps the comparison table aligned with the real billing catalog", () => {
     render(<PricingTable />);
 
-    expect(screen.getByRole("columnheader", { name: "Starter" })).toBeInTheDocument();
-    expect(screen.getByRole("columnheader", { name: "Pro" })).toBeInTheDocument();
-    expect(screen.getByRole("columnheader", { name: "Credits Pack" })).toBeInTheDocument();
-    expect(screen.getByText("1,000 / month")).toBeInTheDocument();
-    expect(screen.getByText("10,000 / month")).toBeInTheDocument();
-    expect(screen.getByText("200 once")).toBeInTheDocument();
-    expect(screen.queryByRole("columnheader", { name: "Free" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("columnheader", { name: "Enterprise" })).not.toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Free" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "ClothCraft Pro" })).toBeInTheDocument();
+    expect(screen.getByText("3 / day")).toBeInTheDocument();
+    expect(screen.getByText("20 / day")).toBeInTheDocument();
+    expect(screen.queryByRole("columnheader", { name: "Credits Pack" })).not.toBeInTheDocument();
   });
 });

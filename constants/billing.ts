@@ -1,6 +1,8 @@
 export type BillingKind = "subscription" | "one_time";
 
 export type PlanKey =
+  | "clothcraft_monthly"
+  | "clothcraft_yearly"
   | "starter_monthly"
   | "starter_yearly"
   | "pro_monthly"
@@ -42,6 +44,30 @@ type OneTimePack = {
 };
 
 export const subscriptionPlans: Record<PlanKey, SubscriptionPlan> = {
+  clothcraft_monthly: {
+    key: "clothcraft_monthly",
+    kind: "subscription",
+    priceCents: 1990,
+    currency: "usd",
+    creditsPerCycle: 0,
+    cycle: "month",
+    ...(process.env.CREEM_CLOTHCRAFT_MONTHLY_PRODUCT_ID?.trim()
+      ? { creemPriceId: process.env.CREEM_CLOTHCRAFT_MONTHLY_PRODUCT_ID.trim() }
+      : {}),
+    grantSchedule: { mode: "per_cycle" },
+  },
+  clothcraft_yearly: {
+    key: "clothcraft_yearly",
+    kind: "subscription",
+    priceCents: 19900,
+    currency: "usd",
+    creditsPerCycle: 0,
+    cycle: "year",
+    ...(process.env.CREEM_CLOTHCRAFT_YEARLY_PRODUCT_ID?.trim()
+      ? { creemPriceId: process.env.CREEM_CLOTHCRAFT_YEARLY_PRODUCT_ID.trim() }
+      : {}),
+    grantSchedule: { mode: "per_cycle" },
+  },
   starter_monthly: {
     key: "starter_monthly",
     kind: "subscription",

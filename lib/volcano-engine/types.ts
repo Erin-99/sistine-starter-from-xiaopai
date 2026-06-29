@@ -58,14 +58,23 @@ export interface ImageGenerationRequest {
   seed?: number;
   guidance_scale?: number;
   watermark?: boolean;
+  sequential_image_generation?: 'disabled';
+  output_format?: 'png' | 'jpeg';
 }
 
 export interface ImageGenerationResponse {
+  model?: string;
   created: number;
   data: {
     url: string;
     revised_prompt?: string;
+    size?: string;
   }[];
+  usage?: {
+    generated_images: number;
+    output_tokens: number;
+    total_tokens: number;
+  };
 }
 
 export interface VideoGenerationRequest {
@@ -155,7 +164,7 @@ export interface VolcanoEngineError {
 export interface GenerationHistory {
   id: string;
   userId: string;
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'try_on';
   prompt: string;
   result: string; // URL
   status: 'pending' | 'processing' | 'completed' | 'failed';

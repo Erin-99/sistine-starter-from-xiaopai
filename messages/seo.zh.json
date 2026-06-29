@@ -1,52 +1,52 @@
 {
   "home": {
-    "title": "Sistine AI - 通过 Vibe Coding 将您的 AI SaaS 产品投入生产",
-    "description": "Sistine AI 是一个提供广泛 AI 工具和服务的平台,帮助您掌控业务。生成图像、文本以及启动业务所需的一切。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "ClothCraft - AI 虚拟试衣",
+    "description": "用 AI 将服装自然地穿到任意模特照片上，最多组合三件服装，快速生成 2K 穿搭效果。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "pricing": {
-    "title": "定价方案 - Sistine AI SaaS 入门套件",
-    "description": "为您的 AI SaaS 选择完美的方案。此定价模块由 Sistine Starter 构建 - 与 Creem 完全集成,支持订阅支付。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "定价 - ClothCraft",
+    "description": "对比 ClothCraft 免费版与 Pro 版的每日试穿次数、服装数量和水印权益。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "blog": {
-    "title": "博客 - Sistine AI",
-    "description": "来自我们团队的最新见解与更新。了解 AI SaaS 开发、vibe coding 以及构建生产级应用的最佳实践。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "博客 - ClothCraft",
+    "description": "分享 AI 虚拟试衣、数字穿搭与服装内容创作的实用方法。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "contact": {
-    "title": "联系我们 - Sistine AI",
-    "description": "与 Sistine AI 团队取得联系。我们很乐意倾听您的声音,并会尽快回复。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "联系我们 - ClothCraft",
+    "description": "如有产品问题或建议，欢迎联系 ClothCraft 团队。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "login": {
-    "title": "登录 - Sistine AI",
-    "description": "登录您的 Sistine AI 账户,访问为您业务提供的强大 AI 工具和服务。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "登录 - ClothCraft",
+    "description": "登录 ClothCraft，开始生成下一套 AI 虚拟试衣效果。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "signup": {
-    "title": "注册 - Sistine AI",
-    "description": "创建您的 Sistine AI 账户,立即使用我们强大的工具开始构建您的 AI SaaS 产品。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "创建账户 - ClothCraft",
+    "description": "创建 ClothCraft 账户，每天可免费生成三次虚拟试衣。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "terms": {
-    "title": "服务条款 - Sistine AI",
-    "description": "阅读我们的服务条款,了解使用 Sistine AI 平台的规则和指南。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "服务条款 - ClothCraft",
+    "description": "阅读 ClothCraft 服务条款。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "privacy": {
-    "title": "隐私政策 - Sistine AI",
-    "description": "了解 Sistine AI 如何收集、使用和保护您的个人信息和数据。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "隐私政策 - ClothCraft",
+    "description": "了解 ClothCraft 如何处理和保护你的信息。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "cookies": {
-    "title": "Cookie 政策 - Sistine AI",
-    "description": "了解 Sistine AI 如何在我们的平台上使用 cookies 和类似的跟踪技术。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "Cookie 政策 - ClothCraft",
+    "description": "了解 ClothCraft 如何使用 Cookie 及类似技术。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   },
   "refund": {
-    "title": "退款政策 - Sistine AI",
-    "description": "查看我们的退款政策,了解申请退款的条件和流程。",
-    "ogImage": "https://ai-saas-template-aceternity.vercel.app/banner.png"
+    "title": "退款政策 - ClothCraft",
+    "description": "查看 ClothCraft 退款申请的条件与流程。",
+    "ogImage": "https://clothycraft.ai/opengraph-image"
   }
 }

@@ -8,7 +8,6 @@ import { Container } from "@/components/container";
 import { Background } from "@/components/background";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
-import { getDefaultOneTimePack } from "@/lib/billing-display";
 import { getSubscriptionPlanTranslationKey } from "@/lib/account-settings";
 import type { ClientUserProfile, UserProfileResponse } from "@/lib/client-api";
 
@@ -22,9 +21,8 @@ export default function DashboardPage() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [userProfile, setUserProfile] = useState<ClientUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const defaultPack = getDefaultOneTimePack();
 
-  // Fetch user profile with credits and subscription
+  // Fetch the user profile and current subscription.
   const fetchUserProfile = useCallback(async () => {
     try {
       const response = await fetch("/api/user/profile");
@@ -56,7 +54,7 @@ export default function DashboardPage() {
     if (success === "1" || checkoutId || orderId || subscriptionId) {
       setPaymentSuccess(true);
       
-      // Refresh user profile to get updated credits
+      // Refresh the profile after the payment webhook updates the subscription.
       setTimeout(() => {
         fetchUserProfile();
       }, 1000);
@@ -68,26 +66,9 @@ export default function DashboardPage() {
     }
   }, [searchParams, router, fetchUserProfile, locale]);
   
-  const startCheckout = useCallback(
-    async () => {
-      const userId = session.data?.user?.id;
-      if (!userId) return;
-      const res = await fetch("/api/payments/creem/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: defaultPack.key, kind: "one_time" }),
-      });
-      if (!res.ok) return;
-      const { url } = (await res.json()) as { url: string };
-      window.location.href = url;
-    },
-    [defaultPack.key, session.data?.user?.id]
-  );
-
   // Authentication is already handled in the layout
   const user = session.data?.user;
   const displayUser = userProfile || user;
-  const credits = userProfile?.credits ?? 0;
   const subscriptionPlanKey = getSubscriptionPlanTranslationKey(
     userProfile?.subscription?.planKey
   );
@@ -212,29 +193,6 @@ export default function DashboardPage() {
                 <span className="text-base font-medium text-card-foreground">
                   {t(`cards.statistics.plans.${subscriptionPlanKey}`)}
                 </span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-muted-foreground">{t('cards.statistics.labels.credits')}</span>
-                <span className="text-2xl font-bold text-card-foreground">{credits}</span>
-              </div>
-              <div className="pt-2 space-y-2">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start transition-colors"
-                  onClick={() => router.push(`/${locale}/credits`)}
-                >
-                  {t('cards.statistics.viewCredits')}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start transition-colors"
-                  onClick={startCheckout}
-                >
-                  {t('cards.statistics.buyCredits', {
-                    credits: defaultPack.displayCredits,
-                    price: defaultPack.displayPrice,
-                  })}
-                </Button>
               </div>
             </div>
           </div>

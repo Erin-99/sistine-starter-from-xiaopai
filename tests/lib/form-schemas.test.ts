@@ -15,6 +15,9 @@ describe("form schemas", () => {
 
     expect(loginResult.success).toBe(false);
     expect(signupResult.success).toBe(false);
+    if (loginResult.success || signupResult.success) {
+      throw new Error("Blank auth emails must fail validation");
+    }
     expect(loginResult.error.issues[0]?.message).toBe("Please enter email");
     expect(signupResult.error.issues[0]?.message).toBe("Please enter email");
   });

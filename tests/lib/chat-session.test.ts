@@ -17,7 +17,7 @@ describe("getOrCreateOwnedChatSession", () => {
       insert: vi.fn(() => ({
         values: insertValues,
       })),
-    } as ChatSessionDatabase;
+    } as unknown as ChatSessionDatabase;
 
     const result = await getOrCreateOwnedChatSession(
       {
@@ -45,7 +45,7 @@ describe("getOrCreateOwnedChatSession", () => {
       insert: vi.fn(() => ({
         values: vi.fn(),
       })),
-    } as ChatSessionDatabase;
+    } as unknown as ChatSessionDatabase;
 
     const result = await getOrCreateOwnedChatSession(
       {
@@ -71,7 +71,7 @@ describe("getOrCreateOwnedChatSession", () => {
       insert: vi.fn(() => ({
         values,
       })),
-    } as ChatSessionDatabase;
+    } as unknown as ChatSessionDatabase;
 
     const result = await getOrCreateOwnedChatSession(
       {

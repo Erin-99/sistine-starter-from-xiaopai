@@ -18,6 +18,8 @@ describe("account settings helpers", () => {
   });
 
   it("maps known subscription plans to existing translation keys", () => {
+    expect(getSubscriptionPlanTranslationKey("clothcraft_monthly")).toBe("clothcraftMonthly");
+    expect(getSubscriptionPlanTranslationKey("clothcraft_yearly")).toBe("clothcraftYearly");
     expect(getSubscriptionPlanTranslationKey("starter_monthly")).toBe("starterMonthly");
     expect(getSubscriptionPlanTranslationKey("starter_yearly")).toBe("starterYearly");
     expect(getSubscriptionPlanTranslationKey("pro_monthly")).toBe("proMonthly");

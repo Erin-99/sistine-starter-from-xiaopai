@@ -37,7 +37,7 @@ export function generatePageMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: 'SISTINE AI',
+      siteName: 'ClothCraft',
       images: [
         {
           url: ogImage,

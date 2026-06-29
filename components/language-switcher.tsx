@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { locales, localeNames } from '@/i18n.config';
 import type { Locale } from '@/i18n.config';
 import { useState, useRef, useEffect } from 'react';
@@ -10,17 +10,11 @@ import { cn } from '@/lib/utils';
 
 export function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const switchLocale = (newLocale: Locale) => {
-    if (newLocale === locale) {
-      setIsOpen(false);
-      return;
-    }
-
+  const getLocaleHref = (newLocale: Locale) => {
     let path = pathname;
 
     for (const loc of locales) {
@@ -31,8 +25,7 @@ export function LanguageSwitcher() {
     }
 
     const normalizedPath = path === '/' ? '' : path;
-    router.push(`/${newLocale}${normalizedPath}`);
-    setIsOpen(false);
+    return `/${newLocale}${normalizedPath}`;
   };
 
   // Close dropdown when clicking outside
@@ -107,9 +100,13 @@ export function LanguageSwitcher() {
           {locales.map((loc) => {
             const isActive = loc === locale;
             return (
-              <button
+              <a
                 key={loc}
-                onClick={() => switchLocale(loc)}
+                href={getLocaleHref(loc)}
+                onClick={event => {
+                  if (isActive) event.preventDefault();
+                  setIsOpen(false);
+                }}
                 className={cn(
                   "flex items-center justify-between w-full px-3 py-2 text-sm",
                   "hover:bg-hover",
@@ -127,7 +124,7 @@ export function LanguageSwitcher() {
                 {isActive && (
                   <Check className="w-4 h-4 text-primary" />
                 )}
-              </button>
+              </a>
             );
           })}
         </div>
